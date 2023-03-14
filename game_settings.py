@@ -9,8 +9,8 @@ class GameSettings:
         self.screen_height = 600
         self.screen_title = 'Letter Shooter'
 
-        # Game settings
+        # Game settings.
         self.max_frame = 60
 
-        # Graphics
+        # Paths to graphics
         self.background = pygame.image.load('graphics/dark_background.png')
