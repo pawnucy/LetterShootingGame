@@ -12,5 +12,8 @@ class GameSettings:
         # Game settings.
         self.max_frame = 60
 
+        # Font
+        self.start_font = pygame.font.Font('graphics/font/PixelFont.ttf', 26)
+
         # Paths to graphics
         self.background = pygame.image.load('graphics/dark_background.png')

@@ -18,7 +18,26 @@ class Game:
         self.background = pygame.transform.scale(self.background, self.screen.get_size())
         self.screen.blit(self.background, (0, 0))
 
+
+    def start_game(self):
+        # Display "Press space to start" message
+        font = self.settings.start_font
+        text = font.render("Press SPACE to START", True, (255, 255, 255))
+        text_rect = text.get_rect(center=self.screen.get_rect().center)
+        self.screen.blit(text, text_rect)
+        pygame.display.update()
+
+        # Wait for space key to be pressed
+        while True:
+            event = pygame.event.wait()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                break
+            elif event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
     def run_game(self):
+        self.start_game()  # Wait for space key to start game
         # Start main loop of the game.
         while True:
             for event in pygame.event.get():
