@@ -18,13 +18,15 @@ class Game:
         self.background = pygame.transform.scale(self.background, self.screen.get_size())
         self.screen.blit(self.background, (0, 0))
 
-
     def start_game(self):
-        # Display "Press space to start" message
+        # Display logo and "Press space to start" message.
         font = self.settings.start_font
+        logo = font.render("LETTER SHOOTER", True, (0, 190, 190))
+        logo_rect = logo.get_rect(center=(400, 150))
         text = font.render("Press SPACE to START", True, (255, 255, 255))
         text_rect = text.get_rect(center=self.screen.get_rect().center)
         self.screen.blit(text, text_rect)
+        self.screen.blit(logo, logo_rect)
         pygame.display.update()
 
         # Wait for space key to be pressed
