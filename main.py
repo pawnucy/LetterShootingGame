@@ -1,12 +1,14 @@
 import pygame
 from sys import exit
 from game_settings import GameSettings
+from letters import Alphabet
 
 
 class Game:
     def __init__(self):
         pygame.init()
         self.settings = GameSettings()
+        self.alphabet = Alphabet()
 
         # Creates a screen with a specific resolution and options.
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
