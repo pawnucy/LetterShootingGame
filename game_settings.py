@@ -10,7 +10,8 @@ class GameSettings:
         self.screen_title = 'Letter Shooter'
 
         # Game settings.
-        self.max_frame = 60
+        self.max_frame = 30
+        self.falling_speed = 6
 
         # Font
         self.start_font = pygame.font.Font('graphics/font/PixelFont.ttf', 26)

@@ -1,7 +1,25 @@
 import pygame
+import random
 from sys import exit
 from game_settings import GameSettings
 from letters import Alphabet
+
+class FallingLetter(pygame.sprite.Sprite):
+    def __init__(self, letter, settings, alphabet):
+        super().__init__()
+        self.alphabet = alphabet
+        self.settings = settings
+        self.image = self.alphabet.get_letter_image(letter)
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randint(0, GameSettings().screen_width - self.rect.width)
+        self.rect.y = -self.rect.height
+        self.speed = self.settings.falling_speed
+
+    def update(self):
+        self.rect.y += self.speed
+
+    def hit(self, key):
+        return key == self.alphabet.get_letter(self.image)
 
 
 class Game:
@@ -19,6 +37,9 @@ class Game:
         self.background = self.settings.background
         self.background = pygame.transform.scale(self.background, self.screen.get_size())
         self.screen.blit(self.background, (0, 0))
+
+        # Create sprite group for falling letters.
+        self.falling_letters = pygame.sprite.Group()
 
     def start_game(self):
         # Display logo and "Press space to start" message.
@@ -48,7 +69,22 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
+                elif event.type == pygame.KEYDOWN:
+                    # Check if pressed key matches any falling letter.
+                    for letter in self.falling_letters:
+                        if letter.hit(event.unicode):
+                            letter.kill()
+
+            # Add new letter to the screen at random intervals.
+            if random.randint(0, 100) < 3:
+                letter = FallingLetter(random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), self.settings,
+                                       self.alphabet)
+                self.falling_letters.add(letter)
+
             # Draw our elements and update everything.
+            self.screen.blit(self.background, (0, 0))
+            self.falling_letters.update()
+            self.falling_letters.draw(self.screen)
             pygame.display.update()
             # While True loop run max times per second.
             self.clock.tick(self.settings.max_frame)
