@@ -17,6 +17,23 @@ class Score:
         score_rect = score_text.get_rect(topright=(self.settings.screen_width - 100, 10))
         self.screen.blit(score_text, score_rect)
 
+
+class Lives:
+    def __init__(self, settings, screen):
+        self.lives = 3
+        self.settings = settings
+        self.screen = screen
+
+    def draw(self):
+        life_font = self.settings.game_font
+        life_text = life_font.render(f"Lives: {self.lives}", True, (255, 255, 255))
+        life_rect = life_text.get_rect(topleft=(100, 10))
+        self.screen.blit(life_text, life_rect)
+
+    def decrease(self):
+        self.lives -= 1
+
+
 class FallingLetter(pygame.sprite.Sprite):
     """ Function responsible for falling letters. """
     def __init__(self, letter, settings, alphabet):
@@ -35,8 +52,8 @@ class FallingLetter(pygame.sprite.Sprite):
     def hit(self, key, score):
 
         if key.lower() == self.alphabet.get_letter(self.image).lower():
-           score.score  += self.settings.points  # Add 10 points to score
-           return True
+            score.score += self.settings.points  # Add 10 points to score
+            return True
         else:
             return False
 
@@ -58,6 +75,7 @@ class Game:
         self.falling_letters = pygame.sprite.Group()
         # Create score.
         self.score = Score(self.settings, self.screen)
+        self.lives = Lives(self.settings, self.screen)
 
     def start_game(self):
         # Display logo and "Press space to start" message.
@@ -79,7 +97,6 @@ class Game:
                 pygame.quit()
                 exit()
 
-
     def run_game(self):
         self.start_game()  # Wait for space key to start game
         # Start main loop of the game.
@@ -94,6 +111,15 @@ class Game:
                         if letter.hit(event.unicode, self.score):
                             letter.kill()
 
+            for letter in self.falling_letters:
+                # Checks if the letter has touched the bottom edge of the screen.
+                if letter.rect.bottom >= self.settings.screen_height:
+                    letter.kill()
+                    self.lives.decrease()
+                # If no lives left, game over.
+                if self.lives.lives == 0:
+                    self.game_over()
+
             # Add new letter to the screen at random intervals.
             if random.randint(0, 100) < 3:
                 letter = FallingLetter(random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), self.settings,
@@ -105,9 +131,21 @@ class Game:
             self.falling_letters.update()
             self.falling_letters.draw(self.screen)
             self.score.update()
+            self.lives.draw()
             pygame.display.update()
+
             # While True loop run max times per second.
             self.clock.tick(self.settings.max_frame)
+
+    def game_over(self):
+        font = self.settings.start_font
+        game_over = font.render("GAME OVER", True, (255, 0, 0))
+        game_over_rect = game_over.get_rect(center=self.screen.get_rect().center)
+        self.screen.blit(game_over, game_over_rect)
+        pygame.display.update()
+        pygame.time.wait(2000)  # Pause for 2 seconds.
+        pygame.display.update()
+        self.run_game()
 
 
 if __name__ == '__main__':
