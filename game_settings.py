@@ -11,10 +11,12 @@ class GameSettings:
 
         # Game settings.
         self.max_frame = 30
-        self.falling_speed = 6
+        self.falling_speed = 5
+        self.points = 10 # Points awarded per letter.
 
         # Font
         self.start_font = pygame.font.Font('graphics/font/PixelFont.ttf', 26)
+        self.game_font = pygame.font.Font('graphics/font/PixelFont.ttf', 20)
 
         # Paths to graphics
         self.background = pygame.image.load('graphics/dark_background.png')
