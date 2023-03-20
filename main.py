@@ -29,7 +29,7 @@ class Score:
         # Update level every 200 points and increase letters falling speed.
         if self.score % 200 == 0 and self.score != 0:
             self.level += 1
-            self.settings.falling_speed += 1
+            self.settings.falling_speed += self.settings.next_level_speed
 
 
 class Lives:
@@ -136,15 +136,23 @@ class Game:
                 if letter.rect.bottom >= self.settings.screen_height:
                     letter.kill()
                     self.lives.decrease()
-                # If no lives left, game over.
-                if self.lives.lives == 0:
-                    self.game_over()
+            # If no lives left, game over.
+            if self.lives.lives == 0:
+                self.game_over()
 
-            # Add new letter to the screen at random intervals.
-            if random.randint(0, 100) < 3:
-                letter = FallingLetter(random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), self.settings,
-                                       self.alphabet)
-                self.falling_letters.add(letter)
+            # Count how many letters are already on the screen
+            count = 0
+            for letter in self.falling_letters:
+                if letter.rect.y >= 0:
+                    count += 1
+
+            # Add new letter to the screen at random intervals
+            if count < 4 and random.randint(0, 100) < 3:
+                letter = FallingLetter(random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), self.settings, self.alphabet)
+                # Check that the letter is not the same as any other letter on the screen
+                same_letters = [l for l in self.falling_letters if l.image == letter.image]
+                if not same_letters:
+                    self.falling_letters.add(letter)
 
             # Draw our elements and update everything.
             self.screen.blit(self.background, (0, 0))
@@ -159,10 +167,20 @@ class Game:
 
     def game_over(self):
         # Game over screen.
+        self.screen.fill((0, 0, 0))
+        # Game over text.
         font = self.settings.start_font
-        game_over = font.render("GAME OVER", True, (255, 0, 0))
-        game_over_rect = game_over.get_rect(center=self.screen.get_rect().center)
+        game_over = font.render('GAME OVER', True, (255, 0, 0))
+        game_over_rect = game_over.get_rect(center=(400, 250))
         self.screen.blit(game_over, game_over_rect)
+        # Final score.
+        final_score = font.render(f'Your score: {self.score.score}', True, (255, 255, 255))
+        final_score_rect = final_score.get_rect(center=self.screen.get_rect().center)
+        self.screen.blit(final_score, final_score_rect)
+        # Information about press space to continue.
+        game_continue = font.render('Press SPACE to CONTINUE', True, (255, 255, 255))
+        game_continue_rect = game_continue.get_rect(center=(400, 450))
+        self.screen.blit(game_continue, game_continue_rect)
         pygame.display.update()
 
         # Wait for space key to be pressed for restart game.

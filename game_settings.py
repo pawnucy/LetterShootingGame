@@ -12,8 +12,9 @@ class GameSettings:
         # Game settings.
         self.max_frame = 30
         self.falling_speed = 5
-        self.points = 10 # Points awarded per letter.
-        self.lives = 3 # Number of initial lives of the player.
+        self.next_level_speed = 1.5  # By how much to increase the speed at the next level.
+        self.points = 20  # Points awarded per letter.
+        self.lives = 3  # Number of initial lives of the player.
 
         # Font
         self.start_font = pygame.font.Font('graphics/font/PixelFont.ttf', 26)
