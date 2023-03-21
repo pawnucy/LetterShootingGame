@@ -116,6 +116,10 @@ class Game:
                 pygame.quit()
                 exit()
 
+    def collide(self, rect1, rect2):
+        # Check if two rects collide.
+        return rect1.colliderect(rect2)
+
     def run_game(self):
         # Main loop of the game.
         self.start_game()  # Wait for space key to start game
@@ -151,7 +155,9 @@ class Game:
                 letter = FallingLetter(random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), self.settings, self.alphabet)
                 # Check that the letter is not the same as any other letter on the screen
                 same_letters = [l for l in self.falling_letters if l.image == letter.image]
-                if not same_letters:
+                # Check that the letter does not collide with any other letter on the screen
+                colliding_letters = [l for l in self.falling_letters if self.collide(l.rect, letter.rect)]
+                if not same_letters and not colliding_letters:
                     self.falling_letters.add(letter)
 
             # Draw our elements and update everything.
